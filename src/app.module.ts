@@ -9,6 +9,9 @@ import { AccountInformation } from "./accounts/account-information/entities/acco
 import { MyJwtModule } from './jwt/my-jwt.module';
 import { RefreshTokensModule } from './refresh_tokens/refresh-tokens.module';
 import { RefreshToken } from "./refresh_tokens/entities/refresh-token.entity";
+import { PostsModule } from './posts/posts.module';
+import { Post } from "./posts/entities/post.entity";
+import { PhotosModule } from './photos/photos.module';
 
 @Module({
   imports: [
@@ -23,7 +26,7 @@ import { RefreshToken } from "./refresh_tokens/entities/refresh-token.entity";
       username: env["DB_USERNAME"],
       password: env["DB_PASSWORD"],
       database: env["DB_DATABASE"],
-      models: [Account, AccountInformation, RefreshToken],
+      models: [Account, AccountInformation, RefreshToken, Post],
       synchronize: true,
       autoLoadModels: true,
       sync: {
@@ -34,6 +37,8 @@ import { RefreshToken } from "./refresh_tokens/entities/refresh-token.entity";
     AuthModule,
     MyJwtModule,
     RefreshTokensModule,
+    PostsModule,
+    PhotosModule,
   ],
   controllers: [],
   providers: [],
