@@ -1,6 +1,18 @@
-import { AutoIncrement, Column, PrimaryKey, Table, Model, Unique, ForeignKey, BelongsTo } from "sequelize-typescript";
+import {
+  AutoIncrement,
+  Column,
+  PrimaryKey,
+  Table,
+  Model,
+  Unique,
+  ForeignKey,
+  BelongsTo,
+  BelongsToMany
+} from "sequelize-typescript";
 import { InferAttributes, InferCreationAttributes } from "sequelize";
 import { Account } from "../../accounts/entities/account.entity";
+import { RelationshipOfRolesAndPosts } from "../../photos/entities/relationship-of-roles-and-posts.entity";
+import { Photo } from "../../photos/entities/photo.entity";
 
 @Table({tableName: "posts", timestamps: false})
 export class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>> {
@@ -22,5 +34,8 @@ export class Post extends Model<InferAttributes<Post>, InferCreationAttributes<P
 
   @BelongsTo(() => Account)
   account: Account;
+  @BelongsToMany(() => Photo, () => RelationshipOfRolesAndPosts)
+  photos: Photo[];
+
 
 }

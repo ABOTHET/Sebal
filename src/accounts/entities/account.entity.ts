@@ -3,6 +3,7 @@ import { InferAttributes, InferCreationAttributes } from "sequelize";
 import { AccountInformation } from "../account-information/entities/account-information.entity";
 import { RefreshToken } from "../../refresh_tokens/entities/refresh-token.entity";
 import { Post } from "../../posts/entities/post.entity";
+import { Photo } from "../../photos/entities/photo.entity";
 
 @Table({tableName: "accounts", timestamps: false})
 export class Account extends Model<InferAttributes<Account>, InferCreationAttributes<Account>> {
@@ -30,4 +31,6 @@ export class Account extends Model<InferAttributes<Account>, InferCreationAttrib
   refresh_token: RefreshToken;
   @HasMany(() => Post)
   posts: Post[];
+  @HasMany(() => Photo)
+  photos: Photo[];
 }

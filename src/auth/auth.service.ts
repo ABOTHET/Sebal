@@ -7,11 +7,13 @@ import * as bcrypt from "bcrypt";
 import { IncorrectData } from "./exceptions/incorrect-data";
 import { MyJwtService } from "../jwt/my-jwt.service";
 import { RefreshToken } from "../refresh_tokens/entities/refresh-token.entity";
+import { YouAreNotLoggedIn } from "../guards/auth/exceptions/not-logged";
+import { RefreshTokensService } from "../refresh_tokens/refresh-tokens.service";
 
 @Injectable()
 export class AuthService {
 
-  constructor(private accountsService: AccountsService, private myJwtService: MyJwtService) {
+  constructor(private accountsService: AccountsService, private myJwtService: MyJwtService, private refreshTokensService: RefreshTokensService) {
   }
 
   async login(loginAccountDto: LoginAccountDto) {
@@ -40,11 +42,15 @@ export class AuthService {
     await refreshToken.update({refresh_token: ""});
   }
 
-  async refresh(account_id: number) {
-    const accountFromDatabase: Account = await this.accountsService.findOneById(account_id, true);
-    const tokens = await this.myJwtService.generateTokens(accountFromDatabase);
-    const refreshToken: RefreshToken = accountFromDatabase.refresh_token;
-    await refreshToken.update({refresh_token: tokens.refresh_token});
+  async refresh(refresh_token: string) {
+    const refreshTokenFromDatabase: RefreshToken = await this.refreshTokensService.findOneByRefreshToken(refresh_token);
+    const isVerify = await this.myJwtService.verifyRefreshToken(refresh_token);
+    const isValid = refreshTokenFromDatabase.refresh_token == refresh_token;
+    if (!isVerify || !isValid) {
+      throw new YouAreNotLoggedIn();
+    }
+    const tokens = await this.myJwtService.generateTokens(refreshTokenFromDatabase.account);
+    await refreshTokenFromDatabase.update({refresh_token: tokens.refresh_token});
     return tokens;
   }
 

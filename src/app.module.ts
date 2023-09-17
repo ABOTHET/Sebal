@@ -12,6 +12,11 @@ import { RefreshToken } from "./refresh_tokens/entities/refresh-token.entity";
 import { PostsModule } from './posts/posts.module';
 import { Post } from "./posts/entities/post.entity";
 import { PhotosModule } from './photos/photos.module';
+import { Photo } from "./photos/entities/photo.entity";
+import { FileToolsModule } from './file-tools/file-tools.module';
+import { FileToolsService } from "./file-tools/file-tools.service";
+import * as path from "path";
+import { RelationshipOfRolesAndPosts } from "./photos/entities/relationship-of-roles-and-posts.entity";
 
 @Module({
   imports: [
@@ -26,12 +31,13 @@ import { PhotosModule } from './photos/photos.module';
       username: env["DB_USERNAME"],
       password: env["DB_PASSWORD"],
       database: env["DB_DATABASE"],
-      models: [Account, AccountInformation, RefreshToken, Post],
+      models: [Account, AccountInformation, RefreshToken, Post, Photo, RelationshipOfRolesAndPosts],
       synchronize: true,
       autoLoadModels: true,
       sync: {
         force: true
       },
+      logging: false
     }),
     AccountsModule,
     AuthModule,
@@ -39,8 +45,21 @@ import { PhotosModule } from './photos/photos.module';
     RefreshTokensModule,
     PostsModule,
     PhotosModule,
+    FileToolsModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule {
+
+  constructor(private fileTools: FileToolsService) {
+    (async () => {
+      let dirname: string = __dirname;
+      let folderPhotoName: string = "photos_database";
+      let res: string = path.join(dirname, "..", folderPhotoName);
+      await this.fileTools.deleteFolder(res);
+      await this.fileTools.createFolder(res);
+    })();
+  }
+
+}

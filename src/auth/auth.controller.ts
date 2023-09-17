@@ -1,13 +1,14 @@
-import { Body, Controller, Post, UseGuards, Request, Res } from "@nestjs/common";
+import { Body, Controller, Post, UseGuards, Res, Req } from "@nestjs/common";
 import { LoginAccountDto } from "./dto/login-account.dto";
 import { Account } from "../accounts/entities/account.entity";
 import { AuthService } from "./auth.service";
 import { AccountModel } from "../accounts/models/account.model";
 import { env } from "process";
-import { Response } from "express";
+import { Response, Request} from "express";
 import { Payload } from "../decorators/account-payload/account-payload.decorator";
 import { AccountPayload } from "../jwt/payload/account-payload";
 import { AuthGuard } from "../guards/auth/auth.guard";
+import { YouAreNotLoggedIn } from "../guards/auth/exceptions/not-logged";
 
 @Controller('auth')
 export class AuthController {
@@ -35,9 +36,12 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @UseGuards(AuthGuard)
-  async refresh(@Payload() accountPayload: AccountPayload, @Res({passthrough: true}) res: Response) {
-    const tokens = await this.authService.refresh(+accountPayload.id);
+  async refresh(@Req() req: Request, @Res({passthrough: true}) res: Response) {
+    const refresh_token = req.cookies.refresh_token;
+    if (!refresh_token) {
+      throw new YouAreNotLoggedIn();
+    }
+    const tokens = await this.authService.refresh(refresh_token);
     res.cookie("refresh_token", tokens.refresh_token, {httpOnly: true, maxAge: Number(env["MAX_AGE"])});
     return {
       access_token: tokens.access_token

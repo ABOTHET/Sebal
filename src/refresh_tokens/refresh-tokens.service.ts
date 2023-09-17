@@ -3,6 +3,7 @@ import { CreateRefreshTokenDto } from './dto/create-refresh-token.dto';
 import { UpdateRefreshTokenDto } from './dto/update-refresh-token.dto';
 import { RefreshToken } from "./entities/refresh-token.entity";
 import { InjectModel } from "@nestjs/sequelize";
+import { Account } from "../accounts/entities/account.entity";
 
 @Injectable()
 export class RefreshTokensService {
@@ -16,6 +17,11 @@ export class RefreshTokensService {
 
   async findOne(id: number) {
     return `This action returns a #${id} refreshToken`;
+  }
+
+  async findOneByRefreshToken(refresh_token: string) {
+    const refreshTokenFromDatabase: RefreshToken = await this.refreshTokenRep.findOne({where: {refresh_token: refresh_token}, include: {model: Account}});
+    return refreshTokenFromDatabase;
   }
 
   update(id: number, updateRefreshTokenDto: UpdateRefreshTokenDto) {
