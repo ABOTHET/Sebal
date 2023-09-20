@@ -9,6 +9,7 @@ import { MyJwtModule } from "../jwt/my-jwt.module";
 @Module({
   controllers: [PhotosController],
   providers: [PhotosService],
-  imports: [FileToolsModule, SequelizeModule.forFeature([Photo]), MyJwtModule]
+  imports: [FileToolsModule, SequelizeModule.forFeature([Photo]), MyJwtModule],
+  exports: [PhotosService]
 })
 export class PhotosModule {}

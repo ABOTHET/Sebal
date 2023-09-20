@@ -40,9 +40,9 @@ export class PhotosService {
     return fileName;
   }
 
-  async findAllByAccountId(accountPayload: AccountPayload) {
+  async findAllByAccountId(id: number) {
     const photosFromDatabase: Photo[] = await this.fileRep
-      .findAll({where: {account_id: accountPayload.id}});
+      .findAll({where: {account_id: id}});
     const photos: string[] = [];
     photosFromDatabase.forEach((photo: Photo) => {
       photos.push(photo.photo_filename);
@@ -77,6 +77,11 @@ export class PhotosService {
     } catch (error) {
       return null;
     }
+  }
+
+  async findOneFromDatabase(filename: string) {
+    const photo: Photo = await this.fileRep.findOne({where: {photo_filename: filename}});
+    return photo;
   }
 
   update(id: number, updatePhotoDto: UpdatePhotoDto) {

@@ -7,6 +7,7 @@ import { AuthGuard } from "../guards/auth/auth.guard";
 import { AccountPayload } from "../jwt/payload/account-payload";
 import { Post as PT } from "./entities/post.entity";
 import { PostModel } from "./models/post.model";
+import { AddPhotosDto } from "./dto/add-photos.dto";
 
 @Controller('posts')
 @UseGuards(AuthGuard)
@@ -23,12 +24,22 @@ export class PostsController {
   @Get()
   async findAll() {
     const postsFromDatabase: PT[] = await this.postsService.findAll();
-    const postsModel: PostModel[] = [];
+    /*const postsModel: PostModel[] = [];
     postsFromDatabase.forEach((post: PT) => {
       postsModel.push(new PostModel(post));
     });
-    return postsModel;
+    return postsModel;*/
+    return postsFromDatabase;
   }
+
+  @Post(":id")
+  async addPhotosToPost(@Payload() accountPayload: AccountPayload, @Body() addPhotosDto: AddPhotosDto) {
+    if (addPhotosDto.photo_filenames.length == 0) {
+      return;
+    }
+    await this.postsService.addPhotoToPost(accountPayload, addPhotosDto);
+  }
+
 
   /*@Get(':id')
   async findOne(@Param('id') id: string) {

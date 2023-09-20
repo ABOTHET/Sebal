@@ -52,9 +52,9 @@ export class PhotosController {
     return array;
   }
 
-  @Get()
-  async findAllByAccountId(@Payload() accountPayload: AccountPayload) {
-    const photos: string[] = await this.photosService.findAllByAccountId(accountPayload);
+  @Get(":account_id")
+  async findAllByAccountId(@Param("account_id") account_id: string) {
+    const photos: string[] = await this.photosService.findAllByAccountId(+account_id);
     return photos;
   }
 
