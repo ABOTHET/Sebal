@@ -47,7 +47,7 @@ export class AuthService {
     const isVerify = await this.myJwtService.verifyRefreshToken(refresh_token);
     const isValid = refreshTokenFromDatabase.refresh_token == refresh_token;
     if (!isVerify || !isValid) {
-      throw new YouAreNotLoggedIn();
+      throw new YouAreNotLoggedIn("bad refresh token");
     }
     const tokens = await this.myJwtService.generateTokens(refreshTokenFromDatabase.account);
     await refreshTokenFromDatabase.update({refresh_token: tokens.refresh_token});

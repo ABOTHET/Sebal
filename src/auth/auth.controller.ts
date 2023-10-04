@@ -39,7 +39,7 @@ export class AuthController {
   async refresh(@Req() req: Request, @Res({passthrough: true}) res: Response) {
     const refresh_token = req.cookies.refresh_token;
     if (!refresh_token) {
-      throw new YouAreNotLoggedIn();
+      throw new YouAreNotLoggedIn("bad refresh token");
     }
     const tokens = await this.authService.refresh(refresh_token);
     res.cookie("refresh_token", tokens.refresh_token, {httpOnly: true, maxAge: Number(env["MAX_AGE"])});

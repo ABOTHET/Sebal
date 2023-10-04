@@ -34,9 +34,9 @@ import { RelationshipOfRolesAndPosts } from "./photos/entities/relationship-of-r
       models: [Account, AccountInformation, RefreshToken, Post, Photo, RelationshipOfRolesAndPosts],
       synchronize: true,
       autoLoadModels: true,
-      sync: {
+      /*sync: {
         force: true
-      },
+      },*/
       logging: false
     }),
     AccountsModule,
